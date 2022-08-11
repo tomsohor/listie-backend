@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  api:
+    container_name: listie_api
+    build: ./
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/app
+      - /app/node_modules
+  db:
+    image: postgres:12-alpine
+    container_name: listie_db
+    environment:
+      POSTGRES_PASSWORD: 'listie_pwd'
+      POSTGRES_USER: 'listie_user'
+      POSTGRES_DB: 'Listie'
+    
+    ports:
+      - 5431:5432
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+volumes:
+  dbdata:
+    
