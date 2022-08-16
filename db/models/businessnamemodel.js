@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const dbConnection = require('../config');
 
-const Owner = require('./ownerModel');
+const Owner = require('./ownermodel');
 
 const Business_name = dbConnection.define('BusinessName', {
     id:{
@@ -18,7 +18,7 @@ const Business_name = dbConnection.define('BusinessName', {
 Owner.hasOne(Business_name,{
     foreignKey:{
         type:DataTypes.UUID,
-        allowNull: true
+        allowNull: false
     }
 })
 Business_name.belongsTo(Owner)
