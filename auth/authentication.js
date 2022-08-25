@@ -8,12 +8,12 @@ const config = (passport)=>{
   async(uname, password, done) => {
     const userService= new User();
     const user = await userService.getUserByUsername(uname);
-    if (!user) { return done(null, false); }
+    if (!user) { return done(null, false,{ msg: 'Incorrect username or password.' }); }
     else{
       if(await bcrypt.compare(password,user.password)){
         return done(null, user);
       }else{
-        return done(null, false);
+        return done(null, false,{ msg: 'Incorrect username or password.' });
       }
     }}
   ));

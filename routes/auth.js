@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const Router = express.Router();
 
-const {config:passportConfig,checkNotAuthenticated} = require('../auth/authentication');
+const {config:passportConfig,checkNotAuthenticated, checkAuthenticated} = require('../auth/authentication');
 
 passportConfig(passport);
 
@@ -13,7 +13,7 @@ const ownerService = new OwnerService();
 const busName = new BusName();
 
 Router.get('/register',checkNotAuthenticated,(req,res)=>{
-    res.send('Register page');
+    res.send('register');
 })
 Router.post('/register',checkNotAuthenticated,async(req,res)=>{
     const result = await ownerService.registerUser(req.body);
@@ -21,19 +21,22 @@ Router.post('/register',checkNotAuthenticated,async(req,res)=>{
 })
 
 Router.get('/login',checkNotAuthenticated,(req,res)=>{
-    res.send('login page');
+    res.send('login');
 })
 
-Router.post('/login',checkNotAuthenticated,passport.authenticate('local',{failureRedirect:'/login'}),async(req,res)=>{
-    const getBusName = await busName.GetBusName(req.user.id);
-  if(!getBusName){
-    res.redirect('/bus/name/create');
-  }else{
-    res.redirect('/');
+Router.post('/login',checkNotAuthenticated,passport.authenticate('local',{ failureRedirect: '/login', failureMessage: true }),async(req,res)=>{
+  if(req.user){
+    const BusName = await busName.CheckBusName(req.user.id);
+    if(!BusName){
+      res.redirect('/bus/name/create');
+    }else{
+      res.redirect('/');
+    }
   }
 });
+  
 
-Router.post('/logout', function(req, res){
+Router.post('/logout',checkAuthenticated, function(req, res){
     req.logout(function(err) {
       if (err) { return next(err); }
       res.redirect('/');

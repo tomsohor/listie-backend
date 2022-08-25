@@ -11,7 +11,7 @@ class BusinessService{
         }
         
     }
-    async GetBusName(id){
+    async CheckBusName(id){
         console.log(id)
         try{
             const business = await BName.findOne({where:{userId:id}})
