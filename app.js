@@ -36,10 +36,12 @@ dbConfig.authenticate()
 const auth = require('./routes/auth');
 const busRoute =  require('./routes/businessname');
 const homePage = require('./routes/home');
+const add = require('./routes/item/item');
 
 app.use('/',auth);
 app.use('/',homePage);
 app.use('/bus',busRoute);
+app.use('/item',add);
 
 // Create Api documenttation
 const swaggerUi = require('swagger-ui-express'),

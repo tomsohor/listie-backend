@@ -1,36 +1,40 @@
 const { DataTypes } = require('sequelize');
 const dbConnection = require('../config');
 
-const Owner = require('./ownermodel');
+const Item = require('./itemmodel');
 
 
-const Item = dbConnection.define('item', {
+const Price = dbConnection.define('itemprice', {
     id:{
         type:DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey:true
     },
-    itemname:{
+    soldunit:{
         type:DataTypes.STRING,
         allowNull: false,
     },
-    itemtype:{
-        type:DataTypes.STRING,
+    unitprice:{
+        type:DataTypes.INTEGER,
         allowNull:false,
     },
-    customertype:{
+    ccy:{
         type:DataTypes.STRING,
         allowNull:false,
     }
 });
 
-Owner.hasMany(Item, {
-    foreignKey:'owerId'})
-
-Item.belongsTo(Owner,{
-    foreignKey:'owerId'
+Item.hasMany(Price, {
+    foreignKey: {
+        name: 'itemId',
+        allowNull:false
+    }
 })
 
-Item.sync({alter:true});
+Price.belongsTo(Item,{
+    foreignKey: 'itemId'
+})
 
-module.exports = Item;
+Price.sync({alter:true});
+
+module.exports = Price;
