@@ -24,11 +24,14 @@ const Item = dbConnection.define('item', {
     }
 });
 
-Owner.hasMany(Item, {
-    foreignKey:'owerId'})
+Owner.hasMany(Item, 
+    {foreignKey:{
+    name: 'ownerId',
+    allowNull:false
+}})
 
 Item.belongsTo(Owner,{
-    foreignKey:'owerId'
+    // foreignKey:'owerId'
 })
 
 Item.sync({alter:true});

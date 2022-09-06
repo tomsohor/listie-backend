@@ -1,4 +1,5 @@
 const owner = require('../db/models/ownermodel');
+const businessname = require('../db/models/businessnamemodel');
 const bcrypt = require('bcrypt');
 
 class OwnerService{
@@ -7,7 +8,9 @@ class OwnerService{
         try{
             const hashPwd = await bcrypt.hash(data.password,10);
             data.password = hashPwd;
-            await owner.create(data);
+            await owner.create(data).then(user=>{
+                businessname.create({userId:user.id});
+            });
             return 'user added..'
         }catch (err){
             return err

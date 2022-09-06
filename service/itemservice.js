@@ -3,10 +3,11 @@ const Price = require('../db/models/pricemodel');
 
 class ItemService{
     constructor(){};
-    async AddItem(data){
+    async AddItem(data,user){
+        console.log(user)
         const {itemname,itemtype,customertype,prices } = data;
         try{
-            await Item.create({itemname,itemtype,customertype}).then(async(item)=>{
+            await Item.create({itemname:itemname,itemtype:itemtype,customertype:customertype,ownerId:user}).then(async(item)=>{
                 await this.AddItemPrice(prices,item.id)
             });
 
@@ -46,8 +47,8 @@ class ItemService{
      }
      }
 
-    async GetAllItem(){
-        const items = await Item.findAll();
+    async GetAllItem(userId){
+        const items = await Item.findAll({where:{ownerId:userId}});
         return items;
     }
 
@@ -60,14 +61,14 @@ class ItemService{
     }
     }
 
-    async GetItemsByType(type){
+    async GetItemsByType(type,userId){
         const itemtype = ['drink & baverage','snack', 'ingredient','other','body and facial care']
         const customertype = ['retailer','end-user']
         if (itemtype.includes(type)){
-            const items = await Item.findAll({where:{itemtype:type}});
+            const items = await Item.findAll({where:{itemtype:type,ownerId:userId}});
             return items
         }else if (customertype.includes(type)){
-            const items = await Item.findAll({where:{customertype:type}})
+            const items = await Item.findAll({where:{customertype:type,ownerId:userId}})
             return items
         }else{
             return "No item exists"
@@ -78,11 +79,7 @@ class ItemService{
 
     async GetItemByQuery(query){
         const items = await Item.findAll({where:query});
-        if (items.length == 0){
-            return "No such item exists"
-        }else{
-            return items
-        }
+        return items
         
     }
 }

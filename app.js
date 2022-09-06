@@ -34,14 +34,15 @@ dbConfig.authenticate()
 
 // acquire route module
 const auth = require('./routes/auth');
-const busRoute =  require('./routes/businessname');
 const homePage = require('./routes/home');
-const add = require('./routes/item/item');
+const item = require('./routes/item/item');
+
+// authentication checker
+const authChecker = require('./auth/authentication');
 
 app.use('/',auth);
-app.use('/',homePage);
-app.use('/bus',busRoute);
-app.use('/item',add);
+app.use('/',authChecker.checkAuthenticated,homePage);
+app.use('/item',authChecker.checkAuthenticated,item);
 
 // Create Api documenttation
 const swaggerUi = require('swagger-ui-express'),

@@ -1,7 +1,6 @@
 const express = require('express');
 const Router = express.Router();
 
-const auth = require('../../auth/authentication');
 const ItemService = require('../../service/itemservice');
 const itemservice = new ItemService();
 
@@ -10,7 +9,8 @@ const itemservice = new ItemService();
 // });
 
 Router.post('/add',async (req,res)=>{
-    const i = await itemservice.AddItem(req.body);
+    const user = req.user;
+    const i = await itemservice.AddItem(req.body,user);
     res.send(i) 
 })
 

@@ -13,6 +13,7 @@ const Business_name = dbConnection.define('BusinessName', {
     name:{
         type:DataTypes.STRING,
         allowNull: false,
+        defaultValue:'Shop Name'
     },   
 });
 Owner.hasOne(Business_name,{

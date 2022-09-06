@@ -3,7 +3,7 @@ services:
   api:
     container_name: listie_api
     build: ./
-    restart: unless-stopped
+    restart: always
     ports:
       - 3000:3000
     depends_on:
@@ -11,19 +11,39 @@ services:
     volumes:
       - ./:/app
       - /app/node_modules
+    networks:
+      - listie
   db:
-    image: postgres:12-alpine
+    image: postgres:13-alpine
     container_name: listie_db
     environment:
       POSTGRES_PASSWORD: 'listie_pwd'
       POSTGRES_USER: 'listie_user'
       POSTGRES_DB: 'Listie'
-    
+    networks:
+      - listie
     ports:
       - 5431:5432
     volumes:
       - dbdata:/var/lib/postgresql/data
 
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    networks:
+      - listie
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+  
+  
 volumes:
   dbdata:
+networks:
+  listie:
     
