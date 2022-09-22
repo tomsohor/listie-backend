@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const session = require('express-session');
 const passport = require('passport');
+const cors = require('cors');
 
 
 require('dotenv').config()
@@ -21,7 +22,10 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
+app.use(cors({
+    origin: process.env.CLIENT, // <-- location of the react app were connecting to
+    credentials: true,
+  }))
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 
@@ -41,8 +45,8 @@ const item = require('./routes/item/item');
 const authChecker = require('./auth/authentication');
 
 app.use('/',auth);
-app.use('/',authChecker.checkAuthenticated,homePage);
-app.use('/item',authChecker.checkAuthenticated,item);
+app.use('/',homePage);
+app.use('/item',item);
 
 // Create Api documenttation
 const swaggerUi = require('swagger-ui-express'),
