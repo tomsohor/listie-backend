@@ -13,7 +13,7 @@ app.use(session({
     saveUninitialized: false,
     secret: process.env.SESSION_SECRET,
     cookie: {
-        maxAge: 360000,
+        // maxAge: 360000,
         //secure:true
     }
   }));

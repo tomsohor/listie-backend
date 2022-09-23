@@ -19,9 +19,13 @@ Router.post('/register',checkNotAuthenticated,async(req,res)=>{
     res.send(result);
 })
 
-// Router.get('/login',checkNotAuthenticated,(req,res)=>{
-//     res.send('login');
-// })
+Router.get('/authenticate',(req,res)=>{
+    if(req.user){
+      res.sendStatus(200);
+    }else{
+      res.sendStatus(401);
+    }
+})
 
 Router.post('/login',
   passport.authenticate('local'),
