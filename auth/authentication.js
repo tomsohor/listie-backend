@@ -26,16 +26,16 @@ const config = (passport)=>{
   });
 }
 
-const checkAuthenticated =(req, res, next) => {
-  if (req.isAuthenticated()) {
+const checkAuthenticated =async(req, res, next) => {
+  if (await req.isAuthenticated()) {
     return next()
   }
 
   res.redirect('/login')
 }
 
-const checkNotAuthenticated =(req, res, next) => {
-  if (req.isAuthenticated()) {
+const checkNotAuthenticated =async(req, res, next) => {
+  if (await req.isAuthenticated()) {
     return res.redirect('/')
   }
   next()

@@ -9,6 +9,7 @@ const itemservice = new ItemService();
 // });
 
 Router.post('/add',async (req,res)=>{
+    console.log('hi')
     const user = req.user;
     const i = await itemservice.AddItem(req.body,user);
     res.send(i) 
