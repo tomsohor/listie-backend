@@ -13,10 +13,10 @@ Router.post('/',async (req,res)=>{
     res.send(i) 
     
 })
-
-Router.put('/',async (req,res)=>{
-    const i = await itemservice.EditItem(req.body,'cf8b4158-0eab-4c11-b0ea-b0ea19f1b285');
+Router.patch('/',async (req,res)=>{
+    const i = await itemservice.EditItem(req.body);
     res.send(i) 
+    
 })
 
 Router.delete('/',async (req,res)=>{

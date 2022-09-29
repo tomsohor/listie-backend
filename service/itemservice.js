@@ -24,21 +24,48 @@ class ItemService {
     try {
       prices.map(async (x) => {
         const { soldunit, unitprice, ccy } = x;
-        await Price.create({ soldunit, unitprice, ccy, itemId: item_id }).then(()=>{console.log('price added')});
+        await Price.create({ soldunit, unitprice, ccy, itemId: item_id }).then(
+          () => {
+            console.log("price added");
+          }
+        );
       });
     } catch (err) {
       return err;
     }
   }
 
-  async EditItem(data, id) {
+  async EditItem(data) {
     try {
-      await Item.update(data, { where: { id: id } }).catch((err) =>
+      const existingPrice = await Price.findAll({ where: { itemId: data.id } });
+      const newPrices = data.prices.filter(
+        ({ id }) => !existingPrice.some(({ id: id2 }) => id === id2)
+      );
+      if (newPrices) {
+        await Price.bulkCreate(
+          newPrices.map((x) => {
+            return {
+              itemId: data.id,
+              soldunit: x.soldunit,
+              unitprice: x.unitprice,
+              ccy: x.ccy,
+            };
+          })
+        );
+      }
+      const removePrices = existingPrice.filter(
+        ({ id }) => !data.prices.some(({ id: id2 }) => id === id2)
+      );
+      if (removePrices) {
+        await Price.destroy({ where: { id: removePrices.map((x) => x.id) } });
+      }
+      // k.prices
+      await Item.update(data, { where: { id: data.id } }).catch((err) =>
         console.log(err)
       );
       return "editted";
     } catch (err) {
-      return err;
+      console.log(err);
     }
   }
 
@@ -58,12 +85,12 @@ class ItemService {
   }
 
   async GetItemDetails(id, user) {
-    const item = await Item.findOne({ where: { id: id,ownerId: user} });
-    const prices = await Price.findAll({where:{itemId:item.id}});
+    const item = await Item.findOne({ where: { id: id, ownerId: user } });
+    const prices = await Price.findAll({ where: { itemId: item.id } });
     if (item == null) {
       return "No such item exists";
     } else {
-      return ({item,prices});
+      return { item, prices };
     }
   }
 
