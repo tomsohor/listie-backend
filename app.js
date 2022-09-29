@@ -5,24 +5,7 @@ const app = express();
 const session = require('express-session');
 const passport = require('passport');
 const cors = require('cors');
-const multer  = require('multer')
-var path = require('path')
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/')
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)) //Appending extension
-  }
-})
-const upload = multer({ dest: 'uploads/', storage })
-
-app.post('/uploads', upload.single('file'), function (req, res, next) {
-  console.log(req.file)
-  console.log(req.body)
-  // req.file is the `avatar` file
-  // req.body will hold the text fields, if there were any
-})
+var bodyParser = require('body-parser');
 
 // session handler
 app.use(session({
@@ -45,7 +28,8 @@ app.use(cors({
   }))
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
-
+app.use(bodyParser.urlencoded());
+app.use('/uploads', express.static('uploads'))
 
 // Database configuration
 const dbConfig = require('./db/config');

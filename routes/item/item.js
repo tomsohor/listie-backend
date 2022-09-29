@@ -1,33 +1,51 @@
-const express = require('express');
+const express = require("express");
 const Router = express.Router();
 
-const ItemService = require('../../service/itemservice');
+const ItemService = require("../../service/itemservice");
 const itemservice = new ItemService();
+const multer = require("multer");
+var path = require("path");
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); //Appending extension
+  },
+});
+const upload = multer({ dest: "uploads/", storage });
 
 // Router.get('/',(req,res)=>{
 //     res.send('add page');
 // });
 
-Router.post('/',async (req,res)=>{
-    const i = await itemservice.AddItem(req.body,req.user);
-    res.send(i) 
-    
-})
-Router.patch('/',async (req,res)=>{
-    const i = await itemservice.EditItem(req.body);
-    res.send(i) 
-    
-})
+Router.post("/", upload.single("file"), async function (req, res, next) {
+  const data = req.body;
+  if (req.file) {
+    data.pic = req.file.filename;
+  }
+  const i = await itemservice.AddItem(data, req.user);
+  res.send(i);
+});
+Router.patch("/", upload.single("file"), async function (req, res, next) {
+  const data = req.body;
+  if (req.file) {
+    data.pic = req.file.filename;
+  }
+  console.log(data)
 
-Router.delete('/',async (req,res)=>{
-    const i = await itemservice.DeleteItem(req.body.id,req.user);
-    res.send(req.params) 
-})
+  const i = await itemservice.EditItem(data);
+  res.send(i);
+});
 
-Router.get('/',async (req,res)=>{
-    const item = await itemservice.GetItemDetails(req.query.id,req.user)
-    res.send(item);
+Router.delete("/", async (req, res) => {
+  const i = await itemservice.DeleteItem(req.body.id, req.user);
+  res.send(req.params);
+});
 
-})
+Router.get("/", async (req, res) => {
+  const item = await itemservice.GetItemDetails(req.query.id, req.user);
+  res.send(item);
+});
 
 module.exports = Router;

@@ -4,12 +4,13 @@ const Price = require("../db/models/pricemodel");
 class ItemService {
   constructor() {}
   async AddItem(data, user) {
-    const { itemname, itemtype, customertype, prices } = data;
+    const { itemname, itemtype, customertype, prices, pic } = data;
     try {
       await Item.create({
         itemname: itemname,
         itemtype: itemtype,
         customertype: customertype,
+        pic,
         ownerId: user,
       }).then(async (item) => {
         await this.AddItemPrice(prices, item.id);
@@ -37,8 +38,9 @@ class ItemService {
 
   async EditItem(data) {
     try {
+      const prices = JSON.parse(data.prices)
       const existingPrice = await Price.findAll({ where: { itemId: data.id } });
-      const newPrices = data.prices.filter(
+      const newPrices = prices.filter(
         ({ id }) => !existingPrice.some(({ id: id2 }) => id === id2)
       );
       if (newPrices) {
