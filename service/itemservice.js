@@ -5,6 +5,8 @@ class ItemService {
   constructor() {}
   async AddItem(data, user) {
     const { itemname, itemtype, customertype, prices, pic } = data;
+    const d = JSON.parse(prices)
+
     try {
       await Item.create({
         itemname: itemname,
@@ -13,7 +15,7 @@ class ItemService {
         pic,
         ownerId: user,
       }).then(async (item) => {
-        await this.AddItemPrice(prices, item.id);
+        await this.AddItemPrice(d, item.id);
       });
 
       return "Item Added";
@@ -39,6 +41,7 @@ class ItemService {
   async EditItem(data) {
     try {
       const prices = JSON.parse(data.prices)
+      console.log(prices)
       const existingPrice = await Price.findAll({ where: { itemId: data.id } });
       const newPrices = prices.filter(
         ({ id }) => !existingPrice.some(({ id: id2 }) => id === id2)

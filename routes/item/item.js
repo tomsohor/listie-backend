@@ -24,6 +24,10 @@ Router.post("/", upload.single("file"), async function (req, res, next) {
   if (req.file) {
     data.pic = req.file.filename;
   }
+  console.log('post', data.prices)
+  console.log('parse', JSON.parse(data.prices))
+
+
   const i = await itemservice.AddItem(data, req.user);
   res.send(i);
 });
