@@ -59,7 +59,7 @@ class ItemService {
         );
       }
       const removePrices = existingPrice.filter(
-        ({ id }) => !data.prices.some(({ id: id2 }) => id === id2)
+        ({ id }) => !prices.some(({ id: id2 }) => id === id2)
       );
       if (removePrices) {
         await Price.destroy({ where: { id: removePrices.map((x) => x.id) } });
