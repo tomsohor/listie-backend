@@ -5,7 +5,7 @@ class ItemService {
   constructor() {}
   async AddItem(data, user) {
     const { itemname, itemtype, customertype, prices, pic } = data;
-    const d = JSON.parse(prices)
+    const d = JSON.parse(prices);
 
     try {
       await Item.create({
@@ -40,8 +40,8 @@ class ItemService {
 
   async EditItem(data) {
     try {
-      const prices = JSON.parse(data.prices)
-      console.log(prices)
+      const prices = JSON.parse(data.prices);
+      console.log(prices);
       const existingPrice = await Price.findAll({ where: { itemId: data.id } });
       const newPrices = prices.filter(
         ({ id }) => !existingPrice.some(({ id: id2 }) => id === id2)
@@ -65,6 +65,9 @@ class ItemService {
         await Price.destroy({ where: { id: removePrices.map((x) => x.id) } });
       }
       // k.prices
+      prices.forEach(async (price) => {
+        await Price.update(price, { where: { id: price.id } });
+      });
       await Item.update(data, { where: { id: data.id } }).catch((err) =>
         console.log(err)
       );
@@ -91,7 +94,9 @@ class ItemService {
 
   async GetItemDetails(id, user) {
     const item = await Item.findOne({ where: { id: id, ownerId: user } });
-    const prices = await Price.findAll({ where: { itemId: item.id } });
+    const prices = await Price.findAll({ where: { itemId: item.id }, order: [
+      ["createdAt", "ASC"]
+    ] });
     if (item == null) {
       return "No such item exists";
     } else {
